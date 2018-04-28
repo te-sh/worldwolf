@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  server:
+    build: './server'
+    image: worldwolf-server
+    container_name: worldwolf-server
+    ports:
+      - '3000:3000'
+    volumes:
+      - './server:/app'
+      - '/app/tmp'
+    links:
+      - 'database:database'
+    tty: true # for debugging with binding.pry
+    stdin_open: true # for debugging with binding.pry
+
+  client:
+    build: './client'
+    image: worldwolf-client
+    container_name: worldwolf-client
+    ports:
+      - '4200:4200'
+    volumes:
+      - './client:/app'
+      - '/app/node_modules'
+
+  database:
+    image: postgres:10.3-alpine
+    container_name: worldwolf-database
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    ports:
+      - '5432:5432'
+    volumes:
+      - 'worldwolf-data:/var/lib/postgresql/data'
+
+volumes:
+  worldwolf-data:

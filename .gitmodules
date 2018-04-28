@@ -1,0 +1,6 @@
+[submodule "client"]
+	path = client
+	url = https://te-sh@github.com/te-sh/worldwolf-client.git
+[submodule "server"]
+	path = server
+	url = https://te-sh@github.com/te-sh/worldwolf-server.git
