@@ -1,24 +1,35 @@
 version: '3'
 
 services:
-  server:
+  server: &server
     build: './server'
     image: worldwolf-server
     container_name: worldwolf-server
+    command: rails server
     ports:
       - '3000:3000'
     volumes:
       - './server:/app'
       - '/app/tmp'
     links:
-      - 'database:database'
+      - database
+      - redis
     tty: true # for debugging with binding.pry
     stdin_open: true # for debugging with binding.pry
+    environment:
+      REDIS_URL: 'redis://redis:6379'
+
+  worker:
+    <<: *server
+    container_name: worldwolf-worker
+    command: sidekiq -C config/sidekiq.yml
+    ports: []
 
   client:
     build: './client'
     image: worldwolf-client
     container_name: worldwolf-client
+    command: npm run start-dev
     ports:
       - '4200:4200'
     volumes:
@@ -28,7 +39,6 @@ services:
   database:
     image: postgres:10.3-alpine
     container_name: worldwolf-database
-    restart: always
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
@@ -36,6 +46,12 @@ services:
       - '5432:5432'
     volumes:
       - 'worldwolf-data:/var/lib/postgresql/data'
+
+  redis:
+    image: redis:3.2.11-alpine
+    container_name: worldwolf-redis
+    ports:
+      - '6379:6379'
 
 volumes:
   worldwolf-data:
