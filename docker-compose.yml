@@ -7,7 +7,7 @@ services:
     container_name: worldwolf-server
     command: rails server
     ports:
-      - '3000:3000'
+      - '3200:3000'
     volumes:
       - './server:/app'
       - '/app/tmp'
@@ -42,16 +42,12 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
-    ports:
-      - '5432:5432'
     volumes:
-      - 'worldwolf-data:/var/lib/postgresql/data'
+      - 'data:/var/lib/postgresql/data'
 
   redis:
     image: redis:3.2.11-alpine
     container_name: worldwolf-redis
-    ports:
-      - '6379:6379'
 
 volumes:
-  worldwolf-data:
+  data:
